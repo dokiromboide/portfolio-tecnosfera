@@ -22,8 +22,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm ci
+          cache: npm
+      - run: npm install
       - run: npm run build
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            /home/runner/.npm/_logs/*.log
+            ${{ github.workspace }}/dist
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v3
         with:
