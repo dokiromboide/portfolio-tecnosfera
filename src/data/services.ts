@@ -11,7 +11,7 @@ export type ServiceId =
 
 export interface AddOn {
   id: string
-  label: string
+  label: { es: string; en: string }
   price: number // COP adicional
 }
 
@@ -71,10 +71,10 @@ export const SERVICES: Service[] = [
     basePrice: 900000,
     priceLabel: { es: 'desde', en: 'from' },
     addOns: [
-      { id: 'extra-section', label: 'Sección adicional (+3)', price: 150000 },
-      { id: 'blog', label: 'Blog / noticias', price: 300000 },
-      { id: 'multilang', label: 'Versión bilingüe ES/EN', price: 250000 },
-      { id: 'cms', label: 'Panel de edición (CMS)', price: 400000 },
+      { id: 'extra-section', label: { es: 'Sección adicional (+3)', en: 'Extra section (+3)' }, price: 150000 },
+      { id: 'blog', label: { es: 'Blog / noticias', en: 'Blog / news' }, price: 300000 },
+      { id: 'multilang', label: { es: 'Versión bilingüe ES/EN', en: 'Bilingual ES/EN version' }, price: 250000 },
+      { id: 'cms', label: { es: 'Panel de edición (CMS)', en: 'Editing panel (CMS)' }, price: 400000 },
     ],
   },
   {
@@ -97,9 +97,9 @@ export const SERVICES: Service[] = [
     basePrice: 500000,
     priceLabel: { es: 'desde / mes', en: 'from / mo' },
     addOns: [
-      { id: 'gmb-posts', label: 'Publicaciones GBP semanales', price: 200000 },
-      { id: 'citations', label: 'Citas en directorios locales', price: 180000 },
-      { id: 'content', label: '2 artículos SEO/mes', price: 350000 },
+      { id: 'gmb-posts', label: { es: 'Publicaciones GBP semanales', en: 'Weekly GBP posts' }, price: 200000 },
+      { id: 'citations', label: { es: 'Citas en directorios locales', en: 'Local directory citations' }, price: 180000 },
+      { id: 'content', label: { es: '2 artículos SEO/mes', en: '2 SEO articles/mo' }, price: 350000 },
     ],
   },
   {
@@ -122,9 +122,9 @@ export const SERVICES: Service[] = [
     basePrice: 1800000,
     priceLabel: { es: 'desde', en: 'from' },
     addOns: [
-      { id: 'extra-products', label: 'Bloque +50 productos', price: 400000 },
-      { id: 'shipping', label: 'Cálculo de envíos', price: 250000 },
-      { id: 'coupons', label: 'Cupones y descuentos', price: 200000 },
+      { id: 'extra-products', label: { es: 'Bloque +50 productos', en: '+50 products block' }, price: 400000 },
+      { id: 'shipping', label: { es: 'Cálculo de envíos', en: 'Shipping calculator' }, price: 250000 },
+      { id: 'coupons', label: { es: 'Cupones y descuentos', en: 'Coupons & discounts' }, price: 200000 },
     ],
   },
   {
@@ -147,9 +147,9 @@ export const SERVICES: Service[] = [
     basePrice: 2500000,
     priceLabel: { es: 'desde / proyecto', en: 'from / project' },
     addOns: [
-      { id: 'crm', label: 'Implementación CRM', price: 800000 },
-      { id: 'automation', label: 'Automatización de procesos', price: 600000 },
-      { id: 'dashboard', label: 'Dashboard de métricas', price: 500000 },
+      { id: 'crm', label: { es: 'Implementación CRM', en: 'CRM implementation' }, price: 800000 },
+      { id: 'automation', label: { es: 'Automatización de procesos', en: 'Process automation' }, price: 600000 },
+      { id: 'dashboard', label: { es: 'Dashboard de métricas', en: 'Metrics dashboard' }, price: 500000 },
     ],
   },
   {
@@ -172,8 +172,8 @@ export const SERVICES: Service[] = [
     basePrice: 250000,
     priceLabel: { es: 'desde / mes', en: 'from / mo' },
     addOns: [
-      { id: 'priority', label: 'Soporte prioritario 24/7', price: 300000 },
-      { id: 'hours', label: 'Bloque 5 hrs mejoras', price: 400000 },
+      { id: 'priority', label: { es: 'Soporte prioritario 24/7', en: '24/7 priority support' }, price: 300000 },
+      { id: 'hours', label: { es: 'Bloque 5 hrs mejoras', en: '5h improvements block' }, price: 400000 },
     ],
   },
 ]

@@ -1,118 +1,126 @@
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import emailjs from '@emailjs/browser'
-import { EMAILJS, CONTACT } from '../config'
-import { SERVICES } from '../data/services'
+import { CONTACT } from '../config'
+import { Logo } from './Logo'
 
-export function Contact() {
-  const { t } = useTranslation()
-  const [status, setStatus] = useState<'idle' | 'sending' | 'ok' | 'error'>('idle')
-  const [form, setForm] = useState({ name: '', email: '', message: '', service: SERVICES[1].name.es })
+/* ============================================================
+   Contact — info + form + confirmación WhatsApp
+   ============================================================ */
 
-  const configured = EMAILJS.publicKey.startsWith('TU_') === false
+const WA = `https://wa.me/${CONTACT.whatsapp}`
 
-  const send = async (e: React.FormEvent) => {
+export function Contact({ prefillMsg }: { prefillMsg: string | null }) {
+  const [sent, setSent] = useState(false)
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [msg, setMsg] = useState('')
+  const [serv, setServ] = useState('Página Web Autocontenida')
+  const [errs, setErrs] = useState<Record<string, boolean>>({})
+
+  // Prefill from quote builder
+  if (prefillMsg && msg !== prefillMsg) {
+    setMsg(prefillMsg)
+  }
+
+  const submit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!configured) {
-      // fallback: abrir cliente de correo si aún no se configura EmailJS
-      window.location.href = `mailto:${CONTACT.email}?subject=${encodeURIComponent(
-        'Cotización ' + form.service,
-      )}&body=${encodeURIComponent(`${form.name}\n${form.email}\n\n${form.message}`)}`
-      return
-    }
-    setStatus('sending')
-    try {
-      await emailjs.send(EMAILJS.serviceId, EMAILJS.templateId, {
-        name: form.name,
-        email: form.email,
-        message: form.message,
-        service: form.service,
-      }, { publicKey: EMAILJS.publicKey })
-      setStatus('ok')
-      setForm({ name: '', email: '', message: '', service: SERVICES[1].name.es })
-    } catch {
-      setStatus('error')
-    }
+    const newErrs: Record<string, boolean> = {}
+    if (!name.trim()) newErrs.name = true
+    if (!email.trim()) newErrs.email = true
+    if (!msg.trim()) newErrs.msg = true
+    setErrs(newErrs)
+    if (Object.keys(newErrs).length) return
+
+    const btn = document.getElementById('cSend') as HTMLButtonElement
+    if (btn) { btn.disabled = true; btn.textContent = 'TRANSMITIENDO SEÑAL…' }
+
+    setTimeout(() => {
+      const fullMsg = `Hola Tecnosfera 👋 Soy ${name.trim()}.\nServicio de interés: ${serv}\n\n${msg.trim()}\n\nEmail de retorno: ${email.trim()}`
+      const waLink = document.getElementById('cOkWa') as HTMLAnchorElement
+      if (waLink) waLink.href = WA + '?text=' + encodeURIComponent(fullMsg)
+      setSent(true)
+      if (btn) btn.textContent = 'SEÑAL ENVIADA ✓'
+      const ok = document.getElementById('cOk')
+      if (ok) ok.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 900)
   }
 
   return (
-    <section id="contact" className="max-w-3xl mx-auto px-4 py-20">
-      <h2 className="text-3xl font-bold text-center">{t('contact.title')}</h2>
-      <p className="mt-2 text-center text-slate-500 dark:text-slate-400">{t('contact.subtitle')}</p>
-
-      <form onSubmit={send} className="mt-8 space-y-4 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 bg-white dark:bg-slate-900">
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">{t('contact.name')}</label>
-            <input
-              required
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-transparent px-3 py-2 text-sm"
-            />
+    <section id="contacto">
+      <div className="wrap con-grid">
+        <div className="con-left">
+          <div className="sec-h rv"><span className="sec-n">( 09 )</span><span className="scr">CONTACTO</span></div>
+          <h2 className="h2 rv">Entremos en la<br/><span className="cy">Tecnosfera.</span></h2>
+          <p className="sec-p rv">Cuéntanos tu proyecto y te respondemos en 24–72 h.</p>
+          <div style={{ marginTop: '34px' }} className="rv">
+            <div className="con-row"><span>CANAL DIRECTO</span><a href={WA} target="_blank" rel="noopener">WHATSAPP +57 315 406 8410</a></div>
+            <div className="con-row"><span>RED PROFESIONAL</span><a href={CONTACT.linkedin} target="_blank" rel="noopener">LINKEDIN ↗</a></div>
+            <div className="con-row"><span>TIEMPO DE RESPUESTA</span><b style={{ fontWeight: 500 }}>24 – 72 HORAS</b></div>
+            <div className="con-row"><span>BASE DE OPERACIÓN</span><b style={{ fontWeight: 500 }}>CO / 2026</b></div>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">{t('contact.email')}</label>
-            <input
-              required
-              type="email"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-transparent px-3 py-2 text-sm"
-            />
+          <div className="con-btns rv">
+            <a className="btn btn-a" href={WA} target="_blank" rel="noopener">WHATSAPP DIRECTO</a>
+            <a className="btn btn-b" href={CONTACT.linkedin} target="_blank" rel="noopener">LINKEDIN ↗</a>
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">{t('contact.service')}</label>
-          <select
-            value={form.service}
-            onChange={(e) => setForm({ ...form, service: e.target.value })}
-            className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-transparent px-3 py-2 text-sm"
-          >
-            {SERVICES.map((s) => (
-              <option key={s.id} value={s.name.es}>
-                {s.name.es}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">{t('contact.message')}</label>
-          <textarea
-            required
-            rows={4}
-            value={form.message}
-            onChange={(e) => setForm({ ...form, message: e.target.value })}
-            className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-transparent px-3 py-2 text-sm"
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={status === 'sending'}
-          className="w-full px-6 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-500 transition disabled:opacity-60"
-        >
-          {status === 'sending' ? t('contact.sending') : t('contact.send')}
-        </button>
-
-        {status === 'ok' && <p className="text-green-600 text-sm text-center">{t('contact.success')}</p>}
-        {status === 'error' && <p className="text-red-600 text-sm text-center">{t('contact.error')}</p>}
-        {!configured && (
-          <p className="text-xs text-slate-400 text-center">
-            EmailJS no configurado: al enviar se abrirá tu cliente de correo a {CONTACT.email}
-          </p>
-        )}
-      </form>
-
-      <p className="mt-6 text-center text-sm text-slate-500">
-        WhatsApp:{' '}
-        <a href={`https://wa.me/${CONTACT.whatsapp}`} className="underline">
-          {CONTACT.whatsapp}
-        </a>{' '}
-        · LinkedIn: <a href={CONTACT.linkedin} className="underline">in/jesus-caicedo</a>
-      </p>
+        <form className="con-form rv" id="cForm" style={{ ['--d' as any]: '.15s' }} onSubmit={submit} noValidate>
+          <div className={`fld ${errs.name ? 'err' : ''}`}>
+            <label htmlFor="fName">IDENTIFÍCATE — NOMBRE</label>
+            <input id="fName" type="text" autoComplete="name" placeholder="Tu nombre" value={name} onChange={e => setName(e.target.value)} />
+          </div>
+          <div className={`fld ${errs.email ? 'err' : ''}`}>
+            <label htmlFor="fMail">CANAL DE RETORNO — EMAIL</label>
+            <input id="fMail" type="email" autoComplete="email" placeholder="tucorreo@dominio.com" value={email} onChange={e => setEmail(e.target.value)} />
+          </div>
+          <div className="fld">
+            <label htmlFor="fServ">SERVICIO DE INTERÉS</label>
+            <select id="fServ" value={serv} onChange={e => setServ(e.target.value)}>
+              <option>Auditoría Web Gratuita</option>
+              <option selected>Página Web Autocontenida</option>
+              <option>SEO Local y Google Maps</option>
+              <option>Tienda Online</option>
+              <option>Transformación Digital PYME</option>
+              <option>Soporte y Mantenimiento</option>
+            </select>
+          </div>
+          <div className={`fld ${errs.msg ? 'err' : ''}`}>
+            <label htmlFor="fMsg">DESCRIBE EL PROBLEMA REAL</label>
+            <textarea id="fMsg" placeholder="Cuéntanos qué está frenando tu negocio…" value={msg} onChange={e => setMsg(e.target.value)}></textarea>
+          </div>
+          <button className="btn btn-a" id="cSend" type="submit">ENVIAR SEÑAL →</button>
+          {sent && (
+            <div className="c-ok" id="cOk">
+              <h3>// SEÑAL RECIBIDA</h3>
+              <p>Tu mensaje quedó registrado en el sistema. Responderemos por el canal indicado en 24–72 horas. Mientras tanto, la Tecnosfera sigue en línea.</p>
+              <a className="btn btn-a sm" id="cOkWa" target="_blank" rel="noopener">CONFIRMAR POR WHATSAPP →</a>
+            </div>
+          )}
+          <p className="c-note">NOTA: CONEXIÓN DE ENVÍO REAL PENDIENTE DE CONFIGURACIÓN EN DESPLIEGUE — PARA RESPUESTA INMEDIATA USA EL CANAL DE WHATSAPP.</p>
+        </form>
+      </div>
     </section>
+  )
+}
+
+/* ---- Footer ---- */
+export function Footer() {
+  return (
+    <footer>
+      <div className="wrap">
+        <div className="f-word" aria-hidden="true">TECN<Logo size={72} className="logo-o" spin />SFERA</div>
+        <div className="f-grid">
+          <div>© 2026 TECNOSFERA<br />TODOS LOS SISTEMAS OPERATIVOS<br /><span className="mg">LA REALIDAD TIENE LÍMITES</span></div>
+          <nav aria-label="Pie">
+            <a href="#soluciones">SOLUCIONES</a><a href="#proyectos">PROYECTOS</a><a href="#proceso">PROCESO</a><a href="#cotizador">COTIZADOR</a><a href="#contacto">CONTACTO</a>
+          </nav>
+          <div className="f-r">
+            <a href={WA} target="_blank" rel="noopener">WHATSAPP 57 315 406 8410</a><br />
+            <a href={CONTACT.linkedin} target="_blank" rel="noopener">LINKEDIN ↗</a><br />
+            SYSTEM / ONLINE · CO / 2026 · <span id="clk2">--:--:--</span>
+          </div>
+        </div>
+        <div className="f-hint">↑↓ NAVEGAR · ↵ EJECUTAR · ESC CERRAR — PULSA ⌘K PARA ABRIR EL SISTEMA</div>
+      </div>
+    </footer>
   )
 }
