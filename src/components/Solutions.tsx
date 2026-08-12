@@ -35,7 +35,7 @@ const READ_MAP: Record<string, { num: string; name: string }> = {
 }
 
 export function Solutions({ onCotizar }: { onCotizar: (need: string) => void }) {
-  const [open, setOpen] = useState<string | null>('aud')
+  const [open, setOpen] = useState<string | null>(null)
   const [read, setRead] = useState({ num: '01', name: 'AUDITORÍA WEB GRATUITA' })
 
   const setReadFor = (id: string) => {
@@ -71,7 +71,7 @@ export function Solutions({ onCotizar }: { onCotizar: (need: string) => void }) 
             {SOL_SERVICES.map(s => (
               <article
                 key={s.id}
-                className={`sol-phase rv ${open === s.id ? 'open' : ''}`}
+                className={`sol-phase ${open === s.id ? 'open' : ''}`}
                 data-id={s.id}
                 data-need={s.need}
                 onMouseEnter={() => setReadFor(s.id)}

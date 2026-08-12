@@ -236,8 +236,8 @@ html:not(.js) .lm>span{transform:none}
 .cat-mkt{color:var(--vio);border-color:rgba(167,139,250,.4)}
 .sol-ph-x{font-family:var(--mono);color:var(--cy);font-size:18px;transition:transform .35s;margin-left:auto;flex:none}
 .sol-phase.open .sol-ph-x{transform:rotate(45deg)}
-.sol-ph-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s cubic-bezier(.2,.8,.2,1)}
-.sol-phase.open .sol-ph-body{grid-template-rows:1fr}
+.sol-ph-body{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.2,.8,.2,1)}
+.sol-phase.open .sol-ph-body{max-height:400px}
 .sol-ph-bwrap{overflow:hidden;min-height:0}
 .sol-ph-bi{padding:18px 0 6px;display:flex;flex-direction:column;gap:18px}
 .sol-ph-d{color:var(--mut);font-size:15px;max-width:560px}
